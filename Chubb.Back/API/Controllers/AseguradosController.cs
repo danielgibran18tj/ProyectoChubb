@@ -15,9 +15,7 @@ namespace API.Controllers
             _aseguradoService = aseguradoService;
         }
 
-        /// <summary>
         /// Obtiene todos los asegurados activos
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> ObtenerTodos()
         {

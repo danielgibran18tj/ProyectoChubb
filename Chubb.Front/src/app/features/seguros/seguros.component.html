@@ -1,0 +1,179 @@
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+  
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-2">
+        <i class="bi bi-shield-fill-check text-blue-600"></i>
+        Gestión de Seguros
+      </h1>
+      <p class="text-gray-600 mt-1">Administra los productos de seguros disponibles</p>
+    </div>
+    <button *ngIf="!mostrarFormulario" (click)="nuevoSeguro()" 
+            class="btn btn-primary flex items-center gap-2">
+      <i class="bi bi-plus-circle"></i>
+      Nuevo Seguro
+    </button>
+  </div>
+
+  <!-- Alerta de mensajes -->
+  <div *ngIf="mensaje" 
+       class="alert alert-{{mensaje.tipo}} alert-dismissible fade show mb-4" 
+       role="alert">
+    <i class="bi" [ngClass]="mensaje.tipo === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'"></i>
+    {{ mensaje.texto }}
+    <button type="button" class="btn-close" (click)="mensaje = null"></button>
+  </div>
+
+  <!-- Formulario -->
+  <div *ngIf="mostrarFormulario" class="card mb-6">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0 flex items-center gap-2">
+        <i class="bi" [ngClass]="modoEdicion ? 'bi-pencil-square' : 'bi-plus-circle'"></i>
+        {{ modoEdicion ? 'Editar Seguro' : 'Nuevo Seguro' }}
+      </h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="seguroForm" (ngSubmit)="guardarSeguro()">
+        <div class="row g-3">
+          
+          <!-- Código Seguro -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold">Código del Seguro *</label>
+            <input type="text" 
+                   class="form-control" 
+                   formControlName="codigoSeguro"
+                   [ngClass]="{'is-invalid': f['codigoSeguro'].invalid && f['codigoSeguro'].touched}"
+                   placeholder="Ej: SEG-001">
+            <div *ngIf="f['codigoSeguro'].invalid && f['codigoSeguro'].touched" class="invalid-feedback">
+              <span *ngIf="f['codigoSeguro'].errors?.['required']">El código es obligatorio</span>
+              <span *ngIf="f['codigoSeguro'].errors?.['maxlength']">Máximo 50 caracteres</span>
+            </div>
+          </div>
+
+          <!-- Nombre Seguro -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold">Nombre del Seguro *</label>
+            <input type="text" 
+                   class="form-control" 
+                   formControlName="nombreSeguro"
+                   [ngClass]="{'is-invalid': f['nombreSeguro'].invalid && f['nombreSeguro'].touched}"
+                   placeholder="Ej: Seguro de Vida Premium">
+            <div *ngIf="f['nombreSeguro'].invalid && f['nombreSeguro'].touched" class="invalid-feedback">
+              <span *ngIf="f['nombreSeguro'].errors?.['required']">El nombre es obligatorio</span>
+              <span *ngIf="f['nombreSeguro'].errors?.['maxlength']">Máximo 200 caracteres</span>
+            </div>
+          </div>
+
+          <!-- Suma Asegurada -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold">Suma Asegurada ($) *</label>
+            <input type="number" 
+                   class="form-control" 
+                   formControlName="sumaAsegurada"
+                   [ngClass]="{'is-invalid': f['sumaAsegurada'].invalid && f['sumaAsegurada'].touched}"
+                   placeholder="50000">
+            <div *ngIf="f['sumaAsegurada'].invalid && f['sumaAsegurada'].touched" class="invalid-feedback">
+              <span *ngIf="f['sumaAsegurada'].errors?.['required']">La suma asegurada es obligatoria</span>
+              <span *ngIf="f['sumaAsegurada'].errors?.['min']">Debe ser mayor a 0</span>
+            </div>
+          </div>
+
+          <!-- Prima -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold">Prima ($) *</label>
+            <input type="number" 
+                   class="form-control" 
+                   formControlName="prima"
+                   [ngClass]="{'is-invalid': f['prima'].invalid && f['prima'].touched}"
+                   placeholder="500">
+            <div *ngIf="f['prima'].invalid && f['prima'].touched" class="invalid-feedback">
+              <span *ngIf="f['prima'].errors?.['required']">La prima es obligatoria</span>
+              <span *ngIf="f['prima'].errors?.['min']">Debe ser mayor a 0</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Botones -->
+        <div class="flex gap-2 mt-4">
+          <button type="submit" 
+                  class="btn btn-success flex items-center gap-2"
+                  [disabled]="loading">
+            <i class="bi bi-check-circle"></i>
+            {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+          </button>
+          <button type="button" 
+                  (click)="cancelar()" 
+                  class="btn btn-secondary flex items-center gap-2">
+            <i class="bi bi-x-circle"></i>
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Tabla de Seguros -->
+  <div *ngIf="!loading && !mostrarFormulario" class="card">
+    <div class="card-header bg-light">
+      <h5 class="mb-0 flex items-center gap-2">
+        <i class="bi bi-table"></i>
+        Lista de Seguros ({{ seguros.length }})
+      </h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="px-4 py-3">Código</th>
+              <th class="px-4 py-3">Nombre</th>
+              <th class="px-4 py-3 text-end">Suma Asegurada</th>
+              <th class="px-4 py-3 text-end">Prima</th>
+              <th class="px-4 py-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let seguro of seguros">
+              <td class="px-4 py-3">
+                <span class="badge bg-primary">{{ seguro.codigoSeguro }}</span>
+              </td>
+              <td class="px-4 py-3 fw-semibold">{{ seguro.nombreSeguro }}</td>
+              <td class="px-4 py-3 text-end">${{ seguro.sumaAsegurada | number:'1.2-2' }}</td>
+              <td class="px-4 py-3 text-end">${{ seguro.prima | number:'1.2-2' }}</td>
+              <td class="px-4 py-3 text-center">
+                <div class="flex gap-2 justify-center">
+                  <button (click)="editarSeguro(seguro)" 
+                          class="btn btn-sm btn-warning" 
+                          title="Editar">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button (click)="eliminarSeguro(seguro)" 
+                          class="btn btn-sm btn-danger" 
+                          title="Eliminar">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="seguros.length === 0">
+              <td colspan="5" class="text-center py-5 text-gray-500">
+                <i class="bi bi-inbox text-5xl block mb-2"></i>
+                No hay seguros registrados
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

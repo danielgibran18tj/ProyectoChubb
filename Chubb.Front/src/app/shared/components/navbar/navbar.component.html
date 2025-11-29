@@ -1,0 +1,84 @@
+<nav class="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg sticky top-0 z-50">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-center py-4">
+      
+      <!-- Logo/Brand -->
+      <div class="flex items-center space-x-2">
+        <i class="bi bi-shield-check text-white text-3xl"></i>
+        <span class="text-white text-xl font-bold hidden md:inline">Sistema de Seguros</span>
+        <span class="text-white text-xl font-bold md:hidden">Seguros</span>
+      </div>
+
+      <div class="hidden md:flex space-x-1">
+        <a routerLink="/seguros" 
+           routerLinkActive="bg-blue-700" 
+           [routerLinkActiveOptions]="{exact: false}"
+           class="text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center space-x-2">
+          <i class="bi bi-shield-fill-check"></i>
+          <span>Seguros</span>
+        </a>
+        
+        <a routerLink="/asegurados" 
+           routerLinkActive="bg-blue-700"
+           class="text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center space-x-2">
+          <i class="bi bi-people-fill"></i>
+          <span>Asegurados</span>
+        </a>
+        
+        <a routerLink="/consultas" 
+           routerLinkActive="bg-blue-700"
+           class="text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center space-x-2">
+          <i class="bi bi-search"></i>
+          <span>Consultas</span>
+        </a>
+        
+        <a routerLink="/carga-masiva" 
+           routerLinkActive="bg-blue-700"
+           class="text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center space-x-2">
+          <i class="bi bi-file-earmark-arrow-up-fill"></i>
+          <span>Carga Masiva</span>
+        </a>
+      </div>
+
+      <button (click)="toggleMenu()" 
+              class="md:hidden text-white focus:outline-none">
+        <i class="bi" [ngClass]="menuOpen ? 'bi-x-lg' : 'bi-list'" 
+           style="font-size: 1.5rem;"></i>
+      </button>
+    </div>
+
+    <div *ngIf="menuOpen" class="md:hidden pb-4 space-y-2">
+      <a routerLink="/seguros" 
+         routerLinkActive="bg-blue-700"
+         (click)="toggleMenu()"
+         class="block text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition">
+        <i class="bi bi-shield-fill-check mr-2"></i>
+        Seguros
+      </a>
+      
+      <a routerLink="/asegurados" 
+         routerLinkActive="bg-blue-700"
+         (click)="toggleMenu()"
+         class="block text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition">
+        <i class="bi bi-people-fill mr-2"></i>
+        Asegurados
+      </a>
+      
+      <a routerLink="/consultas" 
+         routerLinkActive="bg-blue-700"
+         (click)="toggleMenu()"
+         class="block text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition">
+        <i class="bi bi-search mr-2"></i>
+        Consultas
+      </a>
+      
+      <a routerLink="/carga-masiva" 
+         routerLinkActive="bg-blue-700"
+         (click)="toggleMenu()"
+         class="block text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition">
+        <i class="bi bi-file-earmark-arrow-up-fill mr-2"></i>
+        Carga Masiva
+      </a>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,237 @@
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+  
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="bi bi-search text-blue-600"></i>
+      Consultas
+    </h1>
+    <p class="text-gray-600 mt-1">Busca información de seguros y asegurados</p>
+  </div>
+
+  <!-- Alerta de mensajes -->
+  <div *ngIf="mensaje" 
+       class="alert alert-{{mensaje.tipo}} alert-dismissible fade show mb-4" 
+       role="alert">
+    <i class="bi" [ngClass]="{
+      'bi-check-circle-fill': mensaje.tipo === 'success',
+      'bi-exclamation-triangle-fill': mensaje.tipo === 'danger',
+      'bi-info-circle-fill': mensaje.tipo === 'info'
+    }"></i>
+    {{ mensaje.texto }}
+    <button type="button" class="btn-close" (click)="mensaje = null"></button>
+  </div>
+
+  <!-- Pestañas -->
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <button class="nav-link flex items-center gap-2" 
+              [class.active]="tipoConsulta === 'cedula'"
+              (click)="cambiarTipoConsulta('cedula')">
+        <i class="bi bi-person-vcard"></i>
+        Consultar por Cédula
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link flex items-center gap-2" 
+              [class.active]="tipoConsulta === 'codigo'"
+              (click)="cambiarTipoConsulta('codigo')">
+        <i class="bi bi-shield-check"></i>
+        Consultar por Código de Seguro
+      </button>
+    </li>
+  </ul>
+
+  <!-- Consulta por Cédula -->
+  <div *ngIf="tipoConsulta === 'cedula'" class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0 flex items-center gap-2">
+        <i class="bi bi-person-vcard"></i>
+        Consultar Seguros por Cédula
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-8">
+          <label class="form-label fw-bold">Ingrese la Cédula:</label>
+          <input type="text" 
+                 class="form-control" 
+                 [(ngModel)]="cedulaBuscar"
+                 (keyup.enter)="buscarPorCedula()"
+                 placeholder="Ej: 0912345678"
+                 maxlength="10">
+        </div>
+        <div class="col-md-4">
+          <button (click)="buscarPorCedula()" 
+                  class="btn btn-primary w-100 flex items-center justify-center gap-2"
+                  [disabled]="loading">
+            <i class="bi bi-search"></i>
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="text-center py-4 mt-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Buscando...</span>
+        </div>
+      </div>
+
+      <!-- Resultado por Cédula -->
+      <div *ngIf="resultadoCedula && !loading" class="mt-4">
+        <!-- Info del Asegurado -->
+        <div class="alert alert-info">
+          <h6 class="fw-bold mb-2 flex items-center gap-2">
+            <i class="bi bi-person-fill"></i>
+            Información del Asegurado
+          </h6>
+          <div class="row">
+            <div class="col-md-6">
+              <p class="mb-1"><strong>Nombre:</strong> {{ resultadoCedula.asegurado.nombreCompleto }}</p>
+              <p class="mb-1"><strong>Cédula:</strong> {{ resultadoCedula.asegurado.cedula }}</p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-1"><strong>Teléfono:</strong> {{ resultadoCedula.asegurado.telefono }}</p>
+              <p class="mb-1"><strong>Edad:</strong> {{ resultadoCedula.asegurado.edad }} años</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de Seguros -->
+        <h6 class="fw-bold mb-3 flex items-center gap-2">
+          <i class="bi bi-shield-fill-check"></i>
+          Seguros Asignados ({{ resultadoCedula.seguros.length }})
+        </h6>
+        
+        <div *ngIf="resultadoCedula.seguros.length > 0" class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Código</th>
+                <th>Nombre del Seguro</th>
+                <th class="text-end">Suma Asegurada</th>
+                <th class="text-end">Prima</th>
+                <th>Fecha Asignación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let seguro of resultadoCedula.seguros">
+                <td><span class="badge bg-primary">{{ seguro.codigoSeguro }}</span></td>
+                <td class="fw-semibold">{{ seguro.nombreSeguro }}</td>
+                <td class="text-end">${{ seguro.sumaAsegurada | number:'1.2-2' }}</td>
+                <td class="text-end">${{ seguro.prima | number:'1.2-2' }}</td>
+                <td>{{ seguro.fechaAsignacion | date:'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="resultadoCedula.seguros.length === 0" 
+             class="text-center py-4 text-gray-500">
+          <i class="bi bi-inbox text-5xl block mb-2"></i>
+          <p>Este asegurado no tiene seguros asignados</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Consulta por Código de Seguro -->
+  <div *ngIf="tipoConsulta === 'codigo'" class="card mb-4">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0 flex items-center gap-2">
+        <i class="bi bi-shield-check"></i>
+        Consultar Asegurados por Código de Seguro
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-8">
+          <label class="form-label fw-bold">Ingrese el Código del Seguro:</label>
+          <input type="text" 
+                 class="form-control" 
+                 [(ngModel)]="codigoSeguroBuscar"
+                 (keyup.enter)="buscarPorCodigoSeguro()"
+                 placeholder="Ej: SEG-001">
+        </div>
+        <div class="col-md-4">
+          <button (click)="buscarPorCodigoSeguro()" 
+                  class="btn btn-success w-100 flex items-center justify-center gap-2"
+                  [disabled]="loading">
+            <i class="bi bi-search"></i>
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="text-center py-4 mt-3">
+        <div class="spinner-border text-success" role="status">
+          <span class="visually-hidden">Buscando...</span>
+        </div>
+      </div>
+
+      <!-- Resultado por Código -->
+      <div *ngIf="resultadoCodigoSeguro && !loading" class="mt-4">
+        <!-- Info del Seguro -->
+        <div class="alert alert-success">
+          <h6 class="fw-bold mb-2 flex items-center gap-2">
+            <i class="bi bi-shield-fill-check"></i>
+            Información del Seguro
+          </h6>
+          <div class="row">
+            <div class="col-md-6">
+              <p class="mb-1"><strong>Código:</strong> {{ resultadoCodigoSeguro.seguro.codigoSeguro }}</p>
+              <p class="mb-1"><strong>Nombre:</strong> {{ resultadoCodigoSeguro.seguro.nombreSeguro }}</p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-1"><strong>Suma Asegurada:</strong> ${{ resultadoCodigoSeguro.seguro.sumaAsegurada | number:'1.2-2' }}</p>
+              <p class="mb-1"><strong>Prima:</strong> ${{ resultadoCodigoSeguro.seguro.prima | number:'1.2-2' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de Asegurados -->
+        <h6 class="fw-bold mb-3 flex items-center gap-2">
+          <i class="bi bi-people-fill"></i>
+          Asegurados ({{ resultadoCodigoSeguro.asegurados.length }})
+        </h6>
+        
+        <div *ngIf="resultadoCodigoSeguro.asegurados.length > 0" class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Cédula</th>
+                <th>Nombre Completo</th>
+                <th>Teléfono</th>
+                <th class="text-center">Edad</th>
+                <th>Fecha Asignación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let asegurado of resultadoCodigoSeguro.asegurados">
+                <td><span class="badge bg-info">{{ asegurado.cedula }}</span></td>
+                <td class="fw-semibold">{{ asegurado.nombreCompleto }}</td>
+                <td>
+                  <i class="bi bi-telephone-fill text-muted me-1"></i>
+                  {{ asegurado.telefono }}
+                </td>
+                <td class="text-center">
+                  <span class="badge bg-secondary">{{ asegurado.edad }} años</span>
+                </td>
+                <td>{{ asegurado.fechaAsignacion | date:'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="resultadoCodigoSeguro.asegurados.length === 0" 
+             class="text-center py-4 text-gray-500">
+          <i class="bi bi-inbox text-5xl block mb-2"></i>
+          <p>Este seguro no tiene asegurados asignados</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

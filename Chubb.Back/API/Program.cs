@@ -12,8 +12,6 @@ namespace API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -32,12 +30,12 @@ namespace API
             // Registrar SqlConnectionFactory
             builder.Services.AddSingleton<SqlConnectionFactory>();
 
-            // Registrar Repositorios (Data Layer)
+            // Registrar Repositorios 
             builder.Services.AddScoped<ISeguroRepository, SeguroRepository>();
             builder.Services.AddScoped<IAseguradoRepository, AseguradoRepository>();
             builder.Services.AddScoped<IAseguradoSeguroRepository, AseguradoSeguroRepository>();
 
-            // Registrar Servicios (Business Layer)
+            // Registrar Servicios
             builder.Services.AddScoped<ISeguroService, SeguroService>();
             builder.Services.AddScoped<IAseguradoService, AseguradoService>();
             builder.Services.AddScoped<IAsignacionService, AsignacionService>();
@@ -46,7 +44,6 @@ namespace API
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

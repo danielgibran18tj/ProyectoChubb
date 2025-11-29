@@ -1,0 +1,195 @@
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+  
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="bi bi-file-earmark-arrow-up-fill text-blue-600"></i>
+      Carga Masiva de Asegurados
+    </h1>
+    <p class="text-gray-600 mt-1">Importa múltiples asegurados desde un archivo .txt</p>
+  </div>
+
+  <!-- Alerta de mensajes -->
+  <div *ngIf="mensaje" 
+       class="alert alert-{{mensaje.tipo}} alert-dismissible fade show mb-4" 
+       role="alert">
+    <i class="bi" [ngClass]="{
+      'bi-check-circle-fill': mensaje.tipo === 'success',
+      'bi-exclamation-triangle-fill': mensaje.tipo === 'danger' || mensaje.tipo === 'warning'
+    }"></i>
+    {{ mensaje.texto }}
+    <button type="button" class="btn-close" (click)="mensaje = null"></button>
+  </div>
+
+  <!-- Instrucciones -->
+  <div class="card mb-4">
+    <div class="card-header bg-info text-white">
+      <h5 class="mb-0 flex items-center gap-2">
+        <i class="bi bi-info-circle-fill"></i>
+        Instrucciones
+      </h5>
+    </div>
+    <div class="card-body">
+      <h6 class="fw-bold">Formato del Archivo:</h6>
+      <ul class="mb-3">
+        <li>El archivo debe ser formato <strong>.txt</strong></li>
+        <li>Los datos deben estar separados por el carácter <strong>|</strong> (pipe)</li>
+        <li>La primera línea debe contener los encabezados</li>
+        <li>Formato: <code>Cedula|NombreCompleto|Telefono|Edad</code></li>
+      </ul>
+
+      <h6 class="fw-bold">Ejemplo:</h6>
+      <pre class="bg-light p-3 rounded border"><code>Cedula|NombreCompleto|Telefono|Edad
+0912345678|Juan Pérez García|0987654321|25
+0923456789|María López Fernández|0998765432|35
+0934567890|Carlos Ramírez Torres|0976543210|18</code></pre>
+
+      <button (click)="descargarPlantilla()" 
+              class="btn btn-outline-info flex items-center gap-2">
+        <i class="bi bi-download"></i>
+        Descargar Plantilla de Ejemplo
+      </button>
+    </div>
+  </div>
+
+  <!-- Formulario de Carga -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0 flex items-center gap-2">
+        <i class="bi bi-cloud-upload-fill"></i>
+        Cargar Archivo
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="mb-4">
+        <label class="form-label fw-bold">Seleccione el archivo .txt:</label>
+        <input type="file" 
+               id="fileInput"
+               class="form-control" 
+               accept=".txt"
+               (change)="onFileSelected($event)">
+        <small class="text-muted">Tamaño máximo: 5MB</small>
+      </div>
+
+      <div *ngIf="archivoSeleccionado" class="alert alert-secondary mb-4">
+        <i class="bi bi-file-text-fill me-2"></i>
+        <strong>Archivo seleccionado:</strong> {{ archivoSeleccionado.name }}
+        <span class="ms-2 text-muted">({{ (archivoSeleccionado.size / 1024).toFixed(2) }} KB)</span>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex gap-2">
+        <button (click)="procesarArchivo()" 
+                class="btn btn-success flex items-center gap-2"
+                [disabled]="!archivoSeleccionado || loading">
+          <i class="bi" [ngClass]="loading ? 'bi-hourglass-split' : 'bi-check-circle'"></i>
+          {{ loading ? 'Procesando...' : 'Procesar Archivo' }}
+        </button>
+        <button (click)="limpiar()" 
+                class="btn btn-secondary flex items-center gap-2"
+                [disabled]="loading">
+          <i class="bi bi-x-circle"></i>
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+      <span class="visually-hidden">Procesando...</span>
+    </div>
+    <p class="mt-3 text-gray-600">Procesando archivo, por favor espere...</p>
+  </div>
+
+  <!-- Resultados -->
+  <div *ngIf="resultado && !loading" class="card">
+    <div class="card-header" 
+         [ngClass]="{
+           'bg-success text-white': resultado.registrosFallidos === 0,
+           'bg-warning': resultado.registrosFallidos > 0 && resultado.registrosExitosos > 0,
+           'bg-danger text-white': resultado.registrosExitosos === 0
+         }">
+      <h5 class="mb-0 flex items-center gap-2">
+        <i class="bi" [ngClass]="{
+          'bi-check-circle-fill': resultado.registrosFallidos === 0,
+          'bi-exclamation-triangle-fill': resultado.registrosFallidos > 0
+        }"></i>
+        Resultados del Procesamiento
+      </h5>
+    </div>
+    <div class="card-body">
+      
+      <!-- Estadísticas -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="card bg-light text-center">
+            <div class="card-body">
+              <h3 class="text-primary mb-0">{{ resultado.totalRegistros }}</h3>
+              <p class="text-muted mb-0">Total Registros</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card bg-success text-white text-center">
+            <div class="card-body">
+              <h3 class="mb-0">{{ resultado.registrosExitosos }}</h3>
+              <p class="mb-0">Exitosos</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card bg-danger text-white text-center">
+            <div class="card-body">
+              <h3 class="mb-0">{{ resultado.registrosFallidos }}</h3>
+              <p class="mb-0">Fallidos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        {{ resultado.mensaje }}
+      </div>
+
+      <!-- Errores -->
+      <div *ngIf="resultado.errores.length > 0" class="mt-4">
+        <h6 class="fw-bold text-danger mb-3 flex items-center gap-2">
+          <i class="bi bi-exclamation-octagon-fill"></i>
+          Detalle de Errores ({{ resultado.errores.length }})
+        </h6>
+        
+        <div class="table-responsive">
+          <table class="table table-bordered table-sm">
+            <thead class="table-danger">
+              <tr>
+                <th style="width: 100px;">Línea</th>
+                <th style="width: 150px;">Cédula</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let error of resultado.errores">
+                <td class="text-center">
+                  <span class="badge bg-danger">{{ error.numeroLinea }}</span>
+                </td>
+                <td>{{ error.cedula || 'N/A' }}</td>
+                <td class="text-danger">{{ error.mensajeError }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mensaje de éxito total -->
+      <div *ngIf="resultado.errores.length === 0" class="alert alert-success mt-3">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <strong>¡Perfecto!</strong> Todos los registros fueron procesados sin errores.
+      </div>
+
+    </div>
+  </div>
+
+</div>

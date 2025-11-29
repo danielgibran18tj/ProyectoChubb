@@ -80,15 +80,19 @@ namespace Data.Repositories
                     };
                 }
 
-                resultado.Seguros.Add(new SeguroAsignadoDto
+                if (!reader.IsDBNull(reader.GetOrdinal("SeguroId")))
                 {
-                    SeguroId = reader.GetInt32(reader.GetOrdinal("SeguroId")),
-                    CodigoSeguro = reader.GetString(reader.GetOrdinal("CodigoSeguro")),
-                    NombreSeguro = reader.GetString(reader.GetOrdinal("NombreSeguro")),
-                    SumaAsegurada = reader.GetDecimal(reader.GetOrdinal("SumaAsegurada")),
-                    Prima = reader.GetDecimal(reader.GetOrdinal("Prima")),
-                    FechaAsignacion = reader.GetDateTime(reader.GetOrdinal("FechaAsignacion"))
-                });
+                    resultado.Seguros.Add(new SeguroAsignadoDto
+                    {
+                        SeguroId = reader.GetInt32(reader.GetOrdinal("SeguroId")),
+                        CodigoSeguro = reader.GetString(reader.GetOrdinal("CodigoSeguro")),
+                        NombreSeguro = reader.GetString(reader.GetOrdinal("NombreSeguro")),
+                        SumaAsegurada = reader.GetDecimal(reader.GetOrdinal("SumaAsegurada")),
+                        Prima = reader.GetDecimal(reader.GetOrdinal("Prima")),
+                        FechaAsignacion = reader.GetDateTime(reader.GetOrdinal("FechaAsignacion"))
+                    });
+                }
+
             }
 
             return resultado;
@@ -126,15 +130,19 @@ namespace Data.Repositories
                     };
                 }
 
-                resultado.Asegurados.Add(new AseguradoAsignadoDto
+                if (!reader.IsDBNull(reader.GetOrdinal("AseguradoId")))
                 {
-                    AseguradoId = reader.GetInt32(reader.GetOrdinal("AseguradoId")),
-                    Cedula = reader.GetString(reader.GetOrdinal("Cedula")),
-                    NombreCompleto = reader.GetString(reader.GetOrdinal("NombreCompleto")),
-                    Telefono = reader.GetString(reader.GetOrdinal("Telefono")),
-                    Edad = reader.GetInt32(reader.GetOrdinal("Edad")),
-                    FechaAsignacion = reader.GetDateTime(reader.GetOrdinal("FechaAsignacion"))
-                });
+                    resultado.Asegurados.Add(new AseguradoAsignadoDto
+                    {
+                        AseguradoId = reader.GetInt32(reader.GetOrdinal("AseguradoId")),
+                        Cedula = reader.GetString(reader.GetOrdinal("Cedula")),
+                        NombreCompleto = reader.GetString(reader.GetOrdinal("NombreCompleto")),
+                        Telefono = reader.GetString(reader.GetOrdinal("Telefono")),
+                        Edad = reader.GetInt32(reader.GetOrdinal("Edad")),
+                        FechaAsignacion = reader.GetDateTime(reader.GetOrdinal("FechaAsignacion"))
+                    });
+                }
+
             }
 
             return resultado;
