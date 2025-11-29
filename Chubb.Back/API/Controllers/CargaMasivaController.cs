@@ -14,10 +14,8 @@ namespace API.Controllers
             _cargaMasivaService = cargaMasivaService;
         }
 
-        /// <summary>
         /// Procesa un archivo de carga masiva de asegurados (.txt)
         /// Formato esperado: Cedula|NombreCompleto|Telefono|Edad
-        /// </summary>
         [HttpPost("subir-archivo")]
         public async Task<IActionResult> SubirArchivo(IFormFile archivo)
         {
@@ -26,7 +24,7 @@ namespace API.Controllers
                 return BadRequest(new { Message = "No se proporcionó ningún archivo" });
             }
 
-            // Validar extensión
+            // Valida extensión
             var extension = Path.GetExtension(archivo.FileName).ToLower();
             if (extension != ".txt")
             {

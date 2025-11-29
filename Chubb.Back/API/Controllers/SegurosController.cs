@@ -15,9 +15,7 @@ namespace API.Controllers
             _seguroService = seguroService;
         }
 
-        /// <summary>
-        /// Obtiene todos los seguros activos
-        /// </summary>
+        // Obtiene todos los seguros activos
         [HttpGet]
         public async Task<IActionResult> ObtenerTodos()
         {
@@ -25,9 +23,7 @@ namespace API.Controllers
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
-        /// <summary>
-        /// Obtiene un seguro por ID
-        /// </summary>
+        // Obtiene un seguro por ID
         [HttpGet("{id}")]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
@@ -35,9 +31,7 @@ namespace API.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
 
-        /// <summary>
-        /// Crea un nuevo seguro
-        /// </summary>
+        // Crea un nuevo seguro
         [HttpPost]
         public async Task<IActionResult> Crear([FromBody] CrearSeguroDto dto)
         {
@@ -45,9 +39,7 @@ namespace API.Controllers
             return response.Success ? CreatedAtAction(nameof(ObtenerPorId), new { id = response.Data?.SeguroId }, response) : BadRequest(response);
         }
 
-        /// <summary>
-        /// Actualiza un seguro existente
-        /// </summary>
+        // Actualiza un seguro existente
         [HttpPut("{id}")]
         public async Task<IActionResult> Actualizar(int id, [FromBody] ActualizarSeguroDto dto)
         {
@@ -60,9 +52,7 @@ namespace API.Controllers
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
-        /// <summary>
-        /// Elimina un seguro (lógico)
-        /// </summary>
+        // Elimina un seguro (lógico)
         [HttpDelete("{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {

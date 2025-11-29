@@ -14,9 +14,7 @@ namespace API.Controllers
             _asignacionService = asignacionService;
         }
 
-        /// <summary>
-        /// Consulta los seguros de un asegurado por cédula
-        /// </summary>
+        // Consulta los seguros de un asegurado por cédula
         [HttpGet("por-cedula/{cedula}")]
         public async Task<IActionResult> ConsultarPorCedula(string cedula)
         {
@@ -24,9 +22,7 @@ namespace API.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
 
-        /// <summary>
-        /// Consulta los asegurados de un seguro por código
-        /// </summary>
+        // Consulta los asegurados de un seguro por código
         [HttpGet("por-codigo-seguro/{codigoSeguro}")]
         public async Task<IActionResult> ConsultarPorCodigoSeguro(string codigoSeguro)
         {

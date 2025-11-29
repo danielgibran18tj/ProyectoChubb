@@ -15,7 +15,7 @@ namespace API.Controllers
             _aseguradoService = aseguradoService;
         }
 
-        /// Obtiene todos los asegurados activos
+        // Obtiene todos los asegurados activos
         [HttpGet]
         public async Task<IActionResult> ObtenerTodos()
         {
@@ -23,9 +23,7 @@ namespace API.Controllers
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
-        /// <summary>
-        /// Obtiene un asegurado por ID
-        /// </summary>
+        // Obtiene un asegurado por ID
         [HttpGet("{id}")]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
@@ -33,9 +31,7 @@ namespace API.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
 
-        /// <summary>
-        /// Crea un nuevo asegurado
-        /// </summary>
+        // Crea un nuevo asegurado
         [HttpPost]
         public async Task<IActionResult> Crear([FromBody] CrearAseguradoDto dto)
         {
@@ -43,9 +39,7 @@ namespace API.Controllers
             return response.Success ? CreatedAtAction(nameof(ObtenerPorId), new { id = response.Data?.AseguradoId }, response) : BadRequest(response);
         }
 
-        /// <summary>
-        /// Actualiza un asegurado existente
-        /// </summary>
+        // Actualiza un asegurado existente
         [HttpPut("{id}")]
         public async Task<IActionResult> Actualizar(int id, [FromBody] ActualizarAseguradoDto dto)
         {
@@ -58,9 +52,7 @@ namespace API.Controllers
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
-        /// <summary>
-        /// Elimina un asegurado (lógico)
-        /// </summary>
+        // Elimina un asegurado (lógico)
         [HttpDelete("{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {

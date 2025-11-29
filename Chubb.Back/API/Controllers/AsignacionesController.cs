@@ -15,9 +15,7 @@ namespace API.Controllers
             _asignacionService = asignacionService;
         }
 
-        /// <summary>
-        /// Asigna un seguro a un asegurado
-        /// </summary>
+        // Asigna un seguro a un asegurado
         [HttpPost]
         public async Task<IActionResult> AsignarSeguro([FromBody] AsignacionDto dto)
         {

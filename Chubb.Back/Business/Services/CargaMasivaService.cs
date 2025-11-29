@@ -150,7 +150,7 @@ namespace Business.Services
 
                 if (!listaSeguros.Any()) return;
 
-                // Lógica de asignación por edad (ejemplo)
+                // Lógica de asignación por edad 
                 // Producto 1: menores de 20 años
                 // Producto 2: 20 a 30 años
                 // Producto 3: mayores de 30 años
