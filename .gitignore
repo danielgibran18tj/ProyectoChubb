@@ -5,3 +5,8 @@
 .vs/
 obj/
 bin/
+
+
+.angular/
+.vscode/
+node_modules/

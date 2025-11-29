@@ -531,7 +531,7 @@ GO
 
 
 -- Insertar seguros de ejemplo
-INSERT INTO dbo.Seguros (CodigoSeguro, NombreSeguro, SumaAsegurada, Prima)
+INSERT INTO [ChubbSeguroDB].dbo.Seguros (CodigoSeguro, NombreSeguro, SumaAsegurada, Prima)
 VALUES 
     ('SEG-001', 'Seguro Joven', 50000.00, 500.00),
     ('SEG-002', 'Seguro Adulto', 100000.00, 1200.00),

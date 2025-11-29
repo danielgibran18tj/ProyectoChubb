@@ -7,7 +7,7 @@ Este repositorio contiene tanto el backend como el frontend del sistema.
 Para ejecutar correctamente el backend, primero es necesario configurar la base de datos y luego ajustar la cadena de conexión.
 
 #### 1. Crear la base de datos
-Ejecuta el archivo `scriptDatabase.sql`, el cual crea automáticamente la base de datos junto con sus tablas, relaciones y datos iniciales.
+Ejecuta el archivo `scriptDatabase.sql`, el cual crea automáticamente la base de datos junto con sus tablas, relaciones y datos iniciales de los Seguros.
 
 #### 2. Configurar la conexión
 Edita el archivo `appsettings.json` del proyecto backend y actualiza con las valores correspondientes:
@@ -18,10 +18,16 @@ Edita el archivo `appsettings.json` del proyecto backend y actualiza con las val
 - `User ID`
 - `Password`
 
-Con esto ya deberiamos poder consumir las APIS desde el front.
+Con esto ya deberiamos poder ejecutar y consumir las APIS del back.
 
 ### Frontend
-#### 1. Cors
+
+#### 1. Ejecucion 
+Ubicados en la carpeta `Chubb.Front`, ejecutar `npm i` para la instalacion de paquetes del proyecto front.
+Luego, ejecutar `ng serve` para levantar el proyecto.
+
+
+#### 2. Cors
 
 Si tenemos problemas con los CORS debemos de ir a la carpeta API del back, en el program.cs encontraremos la configuacion de los CORS
 
