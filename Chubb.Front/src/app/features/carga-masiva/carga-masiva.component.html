@@ -29,26 +29,37 @@
         Instrucciones
       </h5>
     </div>
-    <div class="card-body">
-      <h6 class="fw-bold">Formato del Archivo:</h6>
-      <ul class="mb-3">
-        <li>El archivo debe ser formato <strong>.txt</strong></li>
-        <li>Los datos deben estar separados por el carácter <strong>|</strong> (pipe)</li>
-        <li>La primera línea debe contener los encabezados</li>
-        <li>Formato: <code>Cedula|NombreCompleto|Telefono|Edad</code></li>
-      </ul>
+    <div class="card-body flex gap-4" >
+      <div>
+        <h6 class="fw-bold">Formato del Archivo de texto:</h6>
+        <ul class="mb-3">
+          <li>El archivo debe ser formato <strong>.txt</strong></li>
+          <li>Los datos deben estar separados por el carácter <strong>|</strong> (pipe)</li>
+          <li>La primera línea debe contener los encabezados</li>
+          <li>Formato: <code>Cedula|NombreCompleto|Telefono|Edad</code></li>
+        </ul>
+  
+        <button (click)="descargarPlantillaTxt()" 
+                class="btn btn-outline-info flex items-center gap-2">
+          <i class="bi bi-download"></i>
+          Descargar Plantilla TXT de Ejemplo
+        </button>
+      </div>
+      <div>
+        <h6 class="fw-bold">Formato del Archivo Excel:</h6>
+        <ul class="mb-3">
+          <li>El archivo debe ser formato <strong>.xlsx</strong> o <strong>.xls</strong></li>
+          <li>La primera línea debe contener los encabezados</li>
+          <li>Las columnas de <strong>Telefono</strong> y <strong>Cedula</strong> en formato de texto</li>
+          <li>Encabezado: <code>Cedula|NombreCompleto|Telefono|Edad</code></li>
+        </ul>
 
-      <h6 class="fw-bold">Ejemplo:</h6>
-      <pre class="bg-light p-3 rounded border"><code>Cedula|NombreCompleto|Telefono|Edad
-0912345678|Juan Pérez García|0987654321|25
-0923456789|María López Fernández|0998765432|35
-0934567890|Carlos Ramírez Torres|0976543210|18</code></pre>
-
-      <button (click)="descargarPlantilla()" 
-              class="btn btn-outline-info flex items-center gap-2">
-        <i class="bi bi-download"></i>
-        Descargar Plantilla de Ejemplo
-      </button>
+        <button (click)="descargarPlantillaExcel()" 
+                class="btn btn-outline-info flex items-center gap-2">
+          <i class="bi bi-download"></i>
+          Descargar Plantilla Excel de Ejemplo
+        </button>
+      </div>
     </div>
   </div>
 
@@ -62,11 +73,11 @@
     </div>
     <div class="card-body">
       <div class="mb-4">
-        <label class="form-label fw-bold">Seleccione el archivo .txt:</label>
+        <label class="form-label fw-bold">Seleccione el archivo :</label>
         <input type="file" 
                id="fileInput"
                class="form-control" 
-               accept=".txt"
+               accept=".txt,.xls,.xlsx"
                (change)="onFileSelected($event)">
         <small class="text-muted">Tamaño máximo: 5MB</small>
       </div>

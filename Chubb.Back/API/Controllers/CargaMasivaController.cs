@@ -26,28 +26,34 @@ namespace API.Controllers
 
             // Valida extensión
             var extension = Path.GetExtension(archivo.FileName).ToLower();
-            if (extension != ".txt")
-            {
-                return BadRequest(new { Message = "Solo se permiten archivos .txt" });
-            }
 
             try
             {
-                using var stream = archivo.OpenReadStream();
-                var asegurados = await _cargaMasivaService.LeerArchivoTextoAsync(stream);
-
-                if (!asegurados.Any())
+                if (extension == ".txt")
                 {
-                    return BadRequest(new { Message = "El archivo no contiene registros válidos" });
-                }
+                    using var stream = archivo.OpenReadStream();
+                    var response = await _cargaMasivaService.LeerArchivoTextoAsync(stream, archivo.FileName);
 
-                var response = await _cargaMasivaService.ProcesarCargaMasivaAsync(asegurados, archivo.FileName);
-                return response.Success ? Ok(response) : BadRequest(response);
+                    return response.Success ? Ok(response) : BadRequest(response);
+                }
+                else if (extension == ".xlsx" || extension == ".xls")
+                {
+                    using var stream = archivo.OpenReadStream();
+                    var response = await _cargaMasivaService.LeerArchivoExcelAsync(stream, archivo.FileName);
+
+                    return response.Success ? Ok(response) : BadRequest(response);
+                }
+                else
+                {
+                    return BadRequest(new { Message = "Solo se permiten archivos .txt" });
+                }
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = $"Error al procesar el archivo: {ex.Message}" });
             }
         }
+
+
     }
 }

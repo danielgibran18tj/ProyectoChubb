@@ -3,8 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Bootstrap Icons */
-@import 'bootstrap-icons/font/bootstrap-icons.css';
 
 /* Estilos globales personalizados */
 body {

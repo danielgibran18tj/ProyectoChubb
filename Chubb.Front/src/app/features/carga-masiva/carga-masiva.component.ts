@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ResultadoCargaMasiva } from '../../core/models/carga-masiva.model';
 import { CargaMasivaService } from '../../core/services/carga-masiva.service';
 import { CommonModule } from '@angular/common';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-carga-masiva',
@@ -22,8 +24,8 @@ export class CargaMasivaComponent {
 
     if (file) {
       // Validar extensión
-      if (!file.name.endsWith('.txt')) {
-        this.mostrarMensaje('danger', 'Solo se permiten archivos .txt');
+      if (!file.name.endsWith('.txt') && !file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+        this.mostrarMensaje('danger', 'Solo se permiten archivos .txt o .xlsx/.xls');
         this.archivoSeleccionado = null;
         event.target.value = '';
         return;
@@ -86,7 +88,7 @@ export class CargaMasivaComponent {
     }
   }
 
-  descargarPlantilla() {
+  descargarPlantillaTxt() {
     const contenido = 'Cedula|NombreCompleto|Telefono|Edad\n0912345678|Juan Pérez García|0987654321|25\n0923456789|María López Fernández|0998765432|35\n0934567890|Carlos Ramírez Torres|0976543210|18';
     const blob = new Blob([contenido], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
@@ -95,6 +97,29 @@ export class CargaMasivaComponent {
     link.download = 'plantilla_asegurados.txt';
     link.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  descargarPlantillaExcel() {
+    const data = [
+      { Cedula: '0988996789', NombreCompleto: 'Maria Lopez Fernandez', Telefono: '0998765432', Edad: 35 },
+      { Cedula: '0977887890', NombreCompleto: 'Carlos Ramirez Torres', Telefono: '0976543210', Edad: 18 },
+      { Cedula: '0999885678', NombreCompleto: 'Juan Perez Garcia', Telefono: '0987654321', Edad: 25 }
+    ];
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data, { cellDates: false });
+    const range = XLSX.utils.decode_range(worksheet['!ref']!);
+
+    for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+      const cedulaCelda = XLSX.utils.encode_cell({ c: 0, r: R });
+      const telefonoCelda = XLSX.utils.encode_cell({ c: 2, r: R });
+      if (worksheet[cedulaCelda]) worksheet[cedulaCelda].t = 's';
+      if (worksheet[telefonoCelda]) worksheet[telefonoCelda].t = 's';
+    }
+
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Asegurados');
+    const excelBuffer: ArrayBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'plantilla_asegurados.xlsx');
   }
 
   mostrarMensaje(tipo: 'success' | 'danger' | 'warning', texto: string) {

@@ -10,7 +10,8 @@ namespace Business.Interfaces
 {
     public interface ICargaMasivaService
     {
-        Task<ApiResponse<ResultadoCargaMasivaDto>> ProcesarCargaMasivaAsync(List<AseguradoCargaDto> asegurados, string nombreArchivo);
-        Task<List<AseguradoCargaDto>> LeerArchivoTextoAsync(Stream fileStream);
+        Task<ApiResponse<ResultadoCargaMasivaDto>> LeerArchivoTextoAsync(Stream fileStream, string nombreArchivo);
+        Task<ApiResponse<ResultadoCargaMasivaDto>> LeerArchivoExcelAsync(Stream fileStream, string nombreArchivo);
+
     }
 }
