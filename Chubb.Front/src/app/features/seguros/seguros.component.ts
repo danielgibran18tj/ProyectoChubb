@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { ActualizarSeguroDto, CrearSeguroDto, Seguro } from '../../core/models/seguro.model';
 import { SeguroService } from '../../core/services/seguro.service';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-seguros',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './seguros.component.html',
   styleUrl: './seguros.component.css'
 })
@@ -19,6 +19,9 @@ export class SegurosComponent {
   modoEdicion = false;
   seguroSeleccionado: Seguro | null = null;
   mensaje: { tipo: 'success' | 'danger', texto: string } | null = null;
+  pageSize: number = 10;
+  paginaActual: number = 1;
+  segurosPaginados: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -43,6 +46,7 @@ export class SegurosComponent {
         if (response.success && response.data) {
           this.seguros = response.data;
         }
+        this.actualizarPaginacion();
         this.loading = false;
       },
       error: (error) => {
@@ -157,6 +161,54 @@ export class SegurosComponent {
 
   get f() {
     return this.seguroForm.controls;
+  }
+
+  get totalPaginas(): number {
+    return Math.ceil(this.seguros.length / this.pageSize);
+  }
+
+  get indiceInicio(): number {
+    return (this.paginaActual - 1) * this.pageSize;
+  }
+
+  get indiceFin(): number {
+    return Math.min(this.indiceInicio + this.pageSize, this.seguros.length);
+  }
+
+  get paginas(): number[] {
+    const paginas: number[] = [];
+    const maxPaginas = 5; // Mostrar máximo 5 números de página
+
+    let inicio = Math.max(1, this.paginaActual - Math.floor(maxPaginas / 2));
+    let fin = Math.min(this.totalPaginas, inicio + maxPaginas - 1);
+
+    if (fin - inicio < maxPaginas - 1) {
+      inicio = Math.max(1, fin - maxPaginas + 1);
+    }
+
+    for (let i = inicio; i <= fin; i++) {
+      paginas.push(i);
+    }
+
+    return paginas;
+  }
+
+  irAPagina(pagina: number): void {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaActual = pagina;
+      this.actualizarPaginacion();
+    }
+  }
+
+  cambiarTamanioPagina(): void {
+    this.paginaActual = 1;
+    this.actualizarPaginacion();
+  }
+
+  actualizarPaginacion(): void {
+    const inicio = this.indiceInicio;
+    const fin = this.indiceFin;
+    this.segurosPaginados = this.seguros.slice(inicio, fin);
   }
 
 }

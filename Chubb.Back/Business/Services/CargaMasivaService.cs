@@ -281,14 +281,14 @@ namespace Business.Services
                 {
                     Seguro? seguroAsignado = null;
 
-                    if (asegurado.Edad < 20 && listaSeguros.Count > 0)
-                        seguroAsignado = listaSeguros[0];
-                    else if (asegurado.Edad >= 20 && asegurado.Edad <= 30 && listaSeguros.Count > 1)
-                        seguroAsignado = listaSeguros[1];
-                    else if (asegurado.Edad > 30 && listaSeguros.Count > 2)
-                        seguroAsignado = listaSeguros[2];
-                    else if (listaSeguros.Count > 0)
-                        seguroAsignado = listaSeguros[0]; // Seguro por defecto
+                    if (asegurado.Edad < 20)
+                        seguroAsignado = listaSeguros.FirstOrDefault(p => p.NombreSeguro == "Seguro Joven");
+
+                    else if (asegurado.Edad <= 30)
+                        seguroAsignado = listaSeguros.FirstOrDefault(p => p.NombreSeguro == "Seguro Adulto");
+
+                    else
+                        seguroAsignado = listaSeguros.FirstOrDefault(p => p.NombreSeguro == "Seguro Senior");
 
                     if (seguroAsignado != null)
                     {

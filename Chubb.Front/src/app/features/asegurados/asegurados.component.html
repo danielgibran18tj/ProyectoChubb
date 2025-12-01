@@ -143,7 +143,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let asegurado of asegurados">
+            <tr *ngFor="let asegurado of aseguradosPaginados">
               <td class="px-4 py-3">
                 <span class="badge bg-info">{{ asegurado.cedula }}</span>
               </td>
@@ -183,6 +183,60 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Paginación -->
+      <div *ngIf="asegurados.length > 0" class="card-footer bg-light d-flex justify-content-between align-items-center py-3">
+        <div class="d-flex align-items-center gap-2">
+          <label for="pageSizeAsegurados" class="mb-0 text-sm">Mostrar:</label>
+          <select id="pageSizeAsegurados" 
+                  [(ngModel)]="pageSizeAsegurados" 
+                  (change)="cambiarTamanioPagina()"
+                  class="form-select form-select-sm" 
+                  style="width: auto;">
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+          <span class="text-sm text-muted">
+            Mostrando {{ indiceInicioAsegurados + 1 }} a {{ indiceFinAsegurados }} de {{ asegurados.length }} registros
+          </span>
+        </div>
+
+        <nav aria-label="Paginación de asegurados">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="paginaActualAsegurados === 1">
+              <button class="page-link" (click)="irAPagina(1)" [disabled]="paginaActualAsegurados === 1">
+                <i class="bi bi-chevron-double-left"></i>
+              </button>
+            </li>
+            <li class="page-item" [class.disabled]="paginaActualAsegurados === 1">
+              <button class="page-link" (click)="irAPagina(paginaActualAsegurados - 1)" [disabled]="paginaActualAsegurados === 1">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+            </li>
+            
+            <li class="page-item" 
+                *ngFor="let pagina of paginasAsegurados" 
+                [class.active]="pagina === paginaActualAsegurados">
+              <button class="page-link" (click)="irAPagina(pagina)">
+                {{ pagina }}
+              </button>
+            </li>
+            
+            <li class="page-item" [class.disabled]="paginaActualAsegurados === totalPaginasAsegurados">
+              <button class="page-link" (click)="irAPagina(paginaActualAsegurados + 1)" [disabled]="paginaActualAsegurados === totalPaginasAsegurados">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </li>
+            <li class="page-item" [class.disabled]="paginaActualAsegurados === totalPaginasAsegurados">
+              <button class="page-link" (click)="irAPagina(totalPaginasAsegurados)" [disabled]="paginaActualAsegurados === totalPaginasAsegurados">
+                <i class="bi bi-chevron-double-right"></i>
+              </button>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>

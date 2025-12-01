@@ -15,6 +15,9 @@ import { CommonModule } from '@angular/common';
 })
 export class AseguradosComponent {
 
+  pageSizeAsegurados: number = 10;
+  paginaActualAsegurados: number = 1;
+  aseguradosPaginados: any[] = [];
   asegurados: Asegurado[] = [];
   seguros: Seguro[] = [];
   aseguradoForm: FormGroup;
@@ -55,6 +58,7 @@ export class AseguradosComponent {
         if (response.success && response.data) {
           this.asegurados = response.data;
         }
+        this.actualizarPaginacion();
         this.loading = false;
       },
       error: (error) => {
@@ -219,6 +223,55 @@ export class AseguradosComponent {
 
   get f() {
     return this.aseguradoForm.controls;
+  }
+
+  get totalPaginasAsegurados(): number {
+    return Math.ceil(this.asegurados.length / this.pageSizeAsegurados);
+  }
+
+  get indiceInicioAsegurados(): number {
+    return (this.paginaActualAsegurados - 1) * this.pageSizeAsegurados;
+  }
+
+  get indiceFinAsegurados(): number {
+    const fin = this.paginaActualAsegurados * this.pageSizeAsegurados;
+    return Math.min(fin, this.asegurados.length);
+  }
+
+  get paginasAsegurados(): number[] {
+    const paginas: number[] = [];
+    const maxPaginas = 5;
+
+    let inicio = Math.max(1, this.paginaActualAsegurados - Math.floor(maxPaginas / 2));
+    let fin = Math.min(this.totalPaginasAsegurados, inicio + maxPaginas - 1);
+
+    if (fin - inicio < maxPaginas - 1) {
+      inicio = Math.max(1, fin - maxPaginas + 1);
+    }
+
+    for (let i = inicio; i <= fin; i++) {
+      paginas.push(i);
+    }
+
+    return paginas;
+  }
+
+  irAPagina(pagina: number): void {
+    if (pagina >= 1 && pagina <= this.totalPaginasAsegurados) {
+      this.paginaActualAsegurados = pagina;
+      this.actualizarPaginacion();
+    }
+  }
+
+  cambiarTamanioPagina(): void {
+    this.paginaActualAsegurados = 1;
+    this.actualizarPaginacion();
+  }
+
+  actualizarPaginacion(): void {
+    const inicio = this.indiceInicioAsegurados;
+    const fin = this.indiceFinAsegurados;
+    this.aseguradosPaginados = this.asegurados.slice(inicio, fin);
   }
 
 }
