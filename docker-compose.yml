@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # SQL SERVER
+  # ==========================================
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: seguros-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD}
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./database:/docker-entrypoint-initdb.d:ro
+    networks:
+      - seguros-network
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${DB_PASSWORD} -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    command: >
+      bash -c "
+      /opt/mssql/bin/sqlservr &
+      sleep 30 &&
+      /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${DB_PASSWORD} -i /docker-entrypoint-initdb.d/init.sql &&
+      wait
+      "
+
+  # ==========================================
+  # BACKEND (.NET API)
+  # ==========================================
+  backend:
+    build:
+      context: ./Chubb.Back
+      dockerfile: Dockerfile
+    container_name: seguros-backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ChubbSeguroDB;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
+    ports:
+      - "5000:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - seguros-network
+    restart: unless-stopped
+
+  # ==========================================
+  # FRONTEND (Angular)
+  # ==========================================
+  frontend:
+    build:
+      context: ./Chubb.Front
+      dockerfile: Dockerfile
+    container_name: seguros-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - seguros-network
+    restart: unless-stopped
+
+# ==========================================
+# NETWORKS
+# ==========================================
+networks:
+  seguros-network:
+    driver: bridge
+
+# ==========================================
+# VOLUMES
+# ==========================================
+volumes:
+  sqlserver-data:
+    driver: local
