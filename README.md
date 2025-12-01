@@ -45,3 +45,52 @@ Revisarlo en \Chubb.Front\src\environments\environment.ts, el valor de apiUrl
 
 <img width="407" height="95" alt="image" src="https://github.com/user-attachments/assets/2fc02043-498c-43b8-a873-748de8fb31f9" />
 
+
+## Instalación con Docker 
+La forma más rápida de ejecutar el proyecto completo es usando Docker. Solo necesitas tener Docker Desktop instalado.
+
+#### Prerrequisitos
+ - Docker Desktop instalado
+ - Cambiar la contraseña a una personal, dentro del `.env` de la carpeta principal, el valor del campo `DB_PASSWORD`
+
+### Pasos de Instalación
+
+#### 1. Clonar el repositorio
+`git clone <url-del-repositorio>`
+
+`cd ProyectoChubb`
+
+#### 2. Construir las imágenes
+`docker-compose build --no-cache`
+
+Este comando tardara un poco debido a que construirá las imágenes de:
+
+ - Backend (.NET 8 API)
+ - Frontend (Angular + Nginx)
+ - SQL Server (con inicialización automática de BD)
+
+#### 3. Levantar los contenedores
+`docker-compose up -d`
+
+
+Este comando iniciará los 3 contenedores:
+
+ - seguros-sqlserver (Puerto 1433)
+ - seguros-backend (Puerto 5000)
+ - seguros-frontend (Puerto 4200)
+
+Con esto ya el proyecto deberia estar funcional en tu navegador `http://localhost:4200`
+
+
+
+## Pruebas
+El proyecto incluye pruebas unitarias y de integración para el backend.
+
+#### Para ejecutar todas las Pruebas ejecuta: 
+##### 1. `cd Chubb.Back`
+##### 2. `dotnet test`
+
+#### O bien puedes usar el `Explorador de pruebas` de Visual Studio 2022: 
+
+<img width="855" height="464" alt="image" src="https://github.com/user-attachments/assets/80d33b5d-8817-4603-accf-952164f02413" />
+
