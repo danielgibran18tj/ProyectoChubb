@@ -9,17 +9,21 @@ namespace API.Controllers
     public class SegurosController : ControllerBase
     {
         private readonly ISeguroService _seguroService;
+        private readonly ILogger<SegurosController> _logger; 
 
-        public SegurosController(ISeguroService seguroService)
+        public SegurosController(ISeguroService seguroService, ILogger<SegurosController> logger)
         {
             _seguroService = seguroService;
+            _logger = logger;
         }
 
         // Obtiene todos los seguros activos
         [HttpGet]
         public async Task<IActionResult> ObtenerTodos()
         {
+            _logger.LogInformation("Obteniendo todos los seguros");
             var response = await _seguroService.ObtenerTodosAsync();
+            _logger.LogInformation("Se obtuvieron {Count} seguros", response.Data?.Count() ?? 0);
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
@@ -45,6 +49,8 @@ namespace API.Controllers
         {
             if (id != dto.SeguroId)
             {
+                _logger.LogError("El ID no coincide ");
+
                 return BadRequest(new { Message = "El ID no coincide" });
             }
 

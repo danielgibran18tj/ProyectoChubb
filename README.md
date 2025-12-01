@@ -7,10 +7,10 @@ Este repositorio contiene tanto el backend como el frontend del sistema.
 Para ejecutar correctamente el backend, primero es necesario configurar la base de datos y luego ajustar la cadena de conexión.
 
 #### 1. Crear la base de datos
-Ejecuta el archivo `scriptDatabase.sql`, el cual crea automáticamente la base de datos junto con sus tablas, relaciones y datos iniciales de los Seguros.
+Ejecuta el archivo `scriptDatabase.sql` que se encuentra dentro de la carpeta database, el mismo crea automáticamente la base de datos junto con sus tablas, relaciones y datos iniciales de los Seguros.
 
 #### 2. Configurar la conexión
-Edita el archivo `appsettings.json` del proyecto backend y actualiza con las valores correspondientes:
+Edita el archivo `appsettings.json` del proyecto API del backend y actualiza con las valores correspondientes:
 
 <img width="889" height="196" alt="image" src="https://github.com/user-attachments/assets/ae088733-f49d-48a5-8601-1b574766cb48" />
 
@@ -18,7 +18,11 @@ Edita el archivo `appsettings.json` del proyecto backend y actualiza con las val
 - `User ID`
 - `Password`
 
-Con esto ya deberiamos poder ejecutar y consumir las APIS del back.
+Con esto ya deberiamos poder ejecutar el proyecto back abriendo la solucion principal `Chubb.Back.sln` y consumir las APIS del back.
+
+`https://localhost:7247/swagger/index.html`
+
+
 
 ### Frontend
 
